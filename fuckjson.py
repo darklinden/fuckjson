@@ -46,6 +46,30 @@ def json_sort_key(name):
 
     return key_num
 
+def cmd_getargs():
+    arg_dict = {}
+
+    tmp_key = ""
+    tmp_value = ""
+
+    for single_arg in sys.argv:
+
+        if single_arg[0] == '-':
+            tmp_key = single_arg[1:]
+        else:
+            tmp_value = single_arg.decode("utf-8")
+
+        if tmp_key == "":
+            tmp_value = ""
+            continue
+
+        if len(tmp_key) > 0 and len(tmp_value) > 0:
+            arg_dict[tmp_key] = tmp_value
+            tmp_key = ""
+            tmp_value = ""
+
+    return arg_dict
+
 def __main__():
 
     # self_install
@@ -59,13 +83,18 @@ def __main__():
 
     if len(path) == 0:
         print("using fuckjson [path] to sort json")
+        print("using fuckjson [path] -k key -v value to set json")
         return
+        
+    arg_dict = cmd_getargs()
 
     f = open(path, "rb")
     content = f.read()
     f.close()
 
     json_obj = json.loads(content)
+    if arg_dict.has_key("k") and arg_dict.has_key("v"):
+        json_obj[arg_dict["k"]] = arg_dict["v"]
 
     new_content = json.dumps(json_obj, indent=4, sort_keys=True)
 
