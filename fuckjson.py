@@ -135,6 +135,9 @@ def __main__():
     json_obj = json.load(f)
     f.close()
 
+    print("get json obj")
+    print(json_obj)
+
     if arg_dict.has_key("f"):
 
         other_path = arg_dict["f"]
@@ -152,10 +155,14 @@ def __main__():
     elif arg_dict.has_key("k") and arg_dict.has_key("v"):
         json_obj[arg_dict["k"]] = arg_dict["v"]
 
+    print("work end json obj")
+    print(json_obj)
     new_content = json.dumps(json_obj, indent=4, sort_keys=True)
 
     f = open(path, "wb")
     f.write(new_content)
     f.close()
+
+    print("Done")
 
 __main__()
