@@ -70,6 +70,50 @@ def cmd_getargs():
 
     return arg_dict
 
+def isDict(obj):
+    if isinstance(obj, dict):
+        return True
+    else:
+        return False
+
+def isList(obj):
+    if isinstance(obj, list):
+        return True
+    else:
+        return False
+
+def merge_list_into_list(base_list, other_list):
+    result = list(base_list).extend(other_list)
+    return result
+
+def merge_dict_into_dict(base_dict, other_dict):
+    result = base_dict.copy()
+    if isDict(base_dict) and isDict(other_dict):
+        for key in other_dict.keys():
+            print(key)
+            other_value = other_dict.get(key, None)
+            base_value = base_dict.get(key, None)
+
+            if isDict(base_value):
+                # print("merge dict")
+                # print(base_value)
+                # print(other_value)
+                result[key] = merge_dict_into_dict(base_value, other_value)
+            elif isList(base_value):
+                result[key] = merge_list_into_list(base_value, other_value)
+            else:
+                # print("set data")
+                # print("key ")
+                # print(key)
+                # print("value ")
+                # print(other_value)
+                result[key] = other_value
+    else:
+        print("data type not match error")
+        result = other_dict
+        
+    return result
+
 def __main__():
 
     # self_install
@@ -89,11 +133,24 @@ def __main__():
     arg_dict = cmd_getargs()
 
     f = open(path, "rb")
-    content = f.read()
+    json_obj = json.load(f)
     f.close()
 
-    json_obj = json.loads(content)
-    if arg_dict.has_key("k") and arg_dict.has_key("v"):
+    if arg_dict.has_key("f"):
+
+        other_path = arg_dict["f"]
+        # if path[0] != "/":
+        #     path = os.path.join(os.getcwd(), path)
+        f = open(other_path, "rb")
+        other_json_obj = json.load(f)
+        f.close()
+
+        if isDict(json_obj) and isDict(other_json_obj):
+            json_obj = merge_dict_into_dict(json_obj, other_json_obj)
+        elif isList(json_obj) and isList(other_json_obj):
+            json_obj = merge_list_into_list(json_obj, other_json_obj)
+
+    elif arg_dict.has_key("k") and arg_dict.has_key("v"):
         json_obj[arg_dict["k"]] = arg_dict["v"]
 
     new_content = json.dumps(json_obj, indent=4, sort_keys=True)
