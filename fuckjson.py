@@ -90,7 +90,6 @@ def merge_dict_into_dict(base_dict, other_dict):
     result = base_dict.copy()
     if isDict(base_dict) and isDict(other_dict):
         for key in other_dict.keys():
-            print(key)
             other_value = other_dict.get(key, None)
             base_value = base_dict.get(key, None)
 
@@ -111,7 +110,7 @@ def merge_dict_into_dict(base_dict, other_dict):
     else:
         print("data type not match error")
         result = other_dict
-        
+
     return result
 
 def __main__():
