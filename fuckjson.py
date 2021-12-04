@@ -126,7 +126,9 @@ def __main__():
 
     if len(path) == 0:
         print("using fuckjson [path] to sort json")
+        print("using fuckjson [path] -k key to get json value")
         print("using fuckjson [path] -k key -v value to set json")
+        print("using fuckjson [path] -f [otherpath] to set json with other json")
         return
         
     arg_dict = cmd_getargs()
@@ -135,14 +137,12 @@ def __main__():
     json_obj = json.load(f)
     f.close()
 
-    print("get json obj")
-    print(json_obj)
+    # print("get json obj")
+    # print(json_obj)
 
     if arg_dict.has_key("f"):
 
         other_path = arg_dict["f"]
-        # if path[0] != "/":
-        #     path = os.path.join(os.getcwd(), path)
         f = open(other_path, "rb")
         other_json_obj = json.load(f)
         f.close()
@@ -152,17 +152,30 @@ def __main__():
         elif isList(json_obj) and isList(other_json_obj):
             json_obj = merge_list_into_list(json_obj, other_json_obj)
 
+        print("work end json obj")
+        print(json_obj)
+        new_content = json.dumps(json_obj, indent=4, sort_keys=True)
+
+        f = open(path, "wb")
+        f.write(new_content)
+        f.close()
+
+        print("Done")
+
     elif arg_dict.has_key("k") and arg_dict.has_key("v"):
         json_obj[arg_dict["k"]] = arg_dict["v"]
 
-    print("work end json obj")
-    print(json_obj)
-    new_content = json.dumps(json_obj, indent=4, sort_keys=True)
+        print("work end json obj")
+        print(json_obj)
+        new_content = json.dumps(json_obj, indent=4, sort_keys=True)
 
-    f = open(path, "wb")
-    f.write(new_content)
-    f.close()
+        f = open(path, "wb")
+        f.write(new_content)
+        f.close()
 
-    print("Done")
+        print("Done")
 
+    elif arg_dict.has_key("k"):
+        print(json_obj[arg_dict["k"]])
+    
 __main__()
